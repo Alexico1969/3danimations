@@ -540,6 +540,8 @@
                         link.classList.add('active');
                     }
                 });
+                // Scroll main content to top when switching sections
+                document.querySelector('main').scrollTop = 0;
             }
 
             navLinks.forEach(link => {
