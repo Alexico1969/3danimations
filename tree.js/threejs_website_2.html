@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Molloy Computer Science - Innovation in 3D</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #00ffff 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            mix-blend-mode: screen;
+            transition: transform 0.2s ease;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 7vw, 6rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #00ffff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite, float 6s ease-in-out infinite;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+            letter-spacing: 2px;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 3vw, 1.8rem);
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            animation: fadeInUp 2s ease-out 0.5s both;
+            color: #00ffff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 300;
+        }
+
+        .logo-container {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            z-index: 20;
+            animation: fadeInUp 2s ease-out 0.3s both;
+        }
+
+        .logo-3d {
+            width: 80px;
+            height: 80px;
+            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
+            transition: all 0.3s ease;
+            animation: logoFloat 4s ease-in-out infinite;
+        }
+
+        .logo-3d:hover {
+            transform: scale(1.1) rotate(5deg);
+            filter: drop-shadow(0 0 30px rgba(0, 255, 255, 0.8));
+        }
+
+        .motto {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            font-size: 0.9rem;
+            color: #00ffff;
+            opacity: 0.8;
+            text-align: center;
+            max-width: 200px;
+            animation: fadeInUp 2s ease-out 1s both;
+            font-style: italic;
+        }
+
+        .cta-button {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            background: linear-gradient(45deg, #00ffff, #ff00ff);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 2s ease-out 1s both;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.4);
+        }
+
+        .stats {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            display: flex;
+            gap: 3rem;
+            animation: fadeInUp 2s ease-out 1.5s both;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ffff;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .floating-element {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #00ffff;
+            border-radius: 50%;
+            animation: float-random 10s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float-random {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) translateX(0) scale(0);
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) translateX(10px) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(10vh) translateX(-10px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(0vh) translateX(0) scale(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats {
+                position: relative;
+                bottom: auto;
+                left: auto;
+                justify-content: center;
+                margin-top: 3rem;
+            }
+            
+            .logo-container {
+                top: 1rem;
+                left: 1rem;
+            }
+            
+            .logo-3d {
+                width: 60px;
+                height: 60px;
+            }
+            
+            .motto {
+                top: 1rem;
+                right: 1rem;
+                font-size: 0.8rem;
+                max-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-cursor"></div>
+    
+    <div class="logo-container" id="logoContainer">
+        <!-- The uploaded logo will be loaded here via JavaScript -->
+    </div>
+    
+    <div class="motto">
+        "Non Scholae Sed Vitae"<br>
+        <span style="font-size: 0.8em; opacity: 0.7;">Not for school, but for life</span>
+    </div>
+    
+    <div id="canvas-container"></div>
+    
+    <div class="floating-elements"></div>
+    
+    <div class="content">
+        <h1 class="hero-title">MOLLOY</h1>
+        <p class="hero-subtitle">Computer Science</p>
+        <button class="cta-button" onclick="triggerExplosion()">Explore Innovation</button>
+    </div>
+    
+    <div class="stats">
+        <div class="stat">
+            <span class="stat-number" id="vertices">0</span>
+            <span class="stat-label">Vertices</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number" id="fps">60</span>
+            <span class="stat-label">FPS</span>
+        </div>
+        <div class="stat">
+            <span class="stat-number" id="objects">0</span>
+            <span class="stat-label">Objects</span>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Load the uploaded logo image
+        async function loadLogo() {
+            try {
+                // Read the uploaded image file
+                const logoData = await window.fs.readFile('image.png');
+                const blob = new Blob([logoData], { type: 'image/png' });
+                const logoUrl = URL.createObjectURL(blob);
+                
+                const logoImg = document.createElement('img');
+                logoImg.src = logoUrl;
+                logoImg.alt = "Archbishop Molloy High School";
+                logoImg.className = 'logo-3d';
+                logoImg.style.cssText = `
+                    width: 100px; 
+                    height: 100px; 
+                    object-fit: contain;
+                    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6)) brightness(1.2) contrast(1.1);
+                    transition: all 0.3s ease;
+                    animation: logoFloat 4s ease-in-out infinite;
+                `;
+                
+                // Add hover effects
+                logoImg.addEventListener('mouseenter', () => {
+                    logoImg.style.transform = 'scale(1.1) rotate(5deg)';
+                    logoImg.style.filter = 'drop-shadow(0 0 30px rgba(0, 255, 255, 0.8)) brightness(1.3) contrast(1.2)';
+                });
+                
+                logoImg.addEventListener('mouseleave', () => {
+                    logoImg.style.transform = 'scale(1) rotate(0deg)';
+                    logoImg.style.filter = 'drop-shadow(0 0 20px rgba(0, 255, 255, 0.6)) brightness(1.2) contrast(1.1)';
+                });
+                
+                document.getElementById('logoContainer').appendChild(logoImg);
+                console.log('Archbishop Molloy logo loaded successfully!');
+            } catch (error) {
+                console.log('Could not load logo file:', error);
+                // Try different possible filenames
+                const possibleNames = ['image.png', 'molloy.png', 'logo.png', 'crest.png'];
+                
+                for (const filename of possibleNames) {
+                    try {
+                        const logoData = await window.fs.readFile(filename);
+                        const blob = new Blob([logoData], { type: 'image/png' });
+                        const logoUrl = URL.createObjectURL(blob);
+                        
+                        const logoImg = document.createElement('img');
+                        logoImg.src = logoUrl;
+                        logoImg.alt = "Archbishop Molloy High School";
+                        logoImg.className = 'logo-3d';
+                        logoImg.style.cssText = `
+                            width: 100px; 
+                            height: 100px; 
+                            object-fit: contain;
+                            filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6)) brightness(1.2) contrast(1.1);
+                            transition: all 0.3s ease;
+                            animation: logoFloat 4s ease-in-out infinite;
+                        `;
+                        
+                        document.getElementById('logoContainer').appendChild(logoImg);
+                        console.log(`Logo loaded with filename: ${filename}`);
+                        return;
+                    } catch (e) {
+                        continue;
+                    }
+                }
+                
+                // Ultimate fallback
+                const logoDiv = document.createElement('div');
+                logoDiv.className = 'logo-3d';
+                logoDiv.style.cssText = `
+                    width: 100px; 
+                    height: 100px; 
+                    border: 3px solid #00ffff; 
+                    border-radius: 50%; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; 
+                    color: #00ffff; 
+                    font-size: 14px;
+                    font-weight: bold;
+                    text-align: center; 
+                    background: rgba(0,255,255,0.1);
+                    filter: drop-shadow(0 0 20px rgba(0, 255, 255, 0.6));
+                    animation: logoFloat 4s ease-in-out infinite;
+                `;
+                logoDiv.innerHTML = 'ARCHBISHOP<br>MOLLOY<br>HIGH SCHOOL';
+                document.getElementById('logoContainer').appendChild(logoDiv);
+            }
+        }
+
+        // Scene setup
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setClearColor(0x000000, 0);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.4);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0x00ffff, 1);
+        directionalLight.position.set(10, 10, 5);
+        scene.add(directionalLight);
+
+        const pointLight = new THREE.PointLight(0xff00ff, 1, 100);
+        pointLight.position.set(-10, -10, -5);
+        scene.add(pointLight);
+
+        // Create main geometric shapes
+        const shapes = [];
+        const materials = [
+            new THREE.MeshPhongMaterial({ color: 0x00ffff, transparent: true, opacity: 0.8, wireframe: false }),
+            new THREE.MeshPhongMaterial({ color: 0xff00ff, transparent: true, opacity: 0.8, wireframe: false }),
+            new THREE.MeshPhongMaterial({ color: 0xffff00, transparent: true, opacity: 0.8, wireframe: false })
+        ];
+
+        // Create torus
+        const torusGeometry = new THREE.TorusGeometry(3, 1, 16, 100);
+        const torus = new THREE.Mesh(torusGeometry, materials[0]);
+        torus.position.set(0, 0, 0);
+        scene.add(torus);
+        shapes.push(torus);
+
+        // Create octahedron
+        const octaGeometry = new THREE.OctahedronGeometry(2);
+        const octahedron = new THREE.Mesh(octaGeometry, materials[1]);
+        octahedron.position.set(-6, 2, -3);
+        scene.add(octahedron);
+        shapes.push(octahedron);
+
+        // Create icosahedron
+        const icoGeometry = new THREE.IcosahedronGeometry(1.5);
+        const icosahedron = new THREE.Mesh(icoGeometry, materials[2]);
+        icosahedron.position.set(6, -2, -2);
+        scene.add(icosahedron);
+        shapes.push(icosahedron);
+
+        // Particle system
+        const particleCount = 1000;
+        const particleGeometry = new THREE.BufferGeometry();
+        const particlePositions = new Float32Array(particleCount * 3);
+        const particleVelocities = [];
+
+        for (let i = 0; i < particleCount; i++) {
+            particlePositions[i * 3] = (Math.random() - 0.5) * 50;
+            particlePositions[i * 3 + 1] = (Math.random() - 0.5) * 50;
+            particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 50;
+            
+            particleVelocities.push({
+                x: (Math.random() - 0.5) * 0.02,
+                y: (Math.random() - 0.5) * 0.02,
+                z: (Math.random() - 0.5) * 0.02
+            });
+        }
+
+        particleGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+        
+        const particleMaterial = new THREE.PointsMaterial({
+            color: 0x00ffff,
+            size: 0.1,
+            transparent: true,
+            opacity: 0.6,
+            blending: THREE.AdditiveBlending
+        });
+
+        const particles = new THREE.Points(particleGeometry, particleMaterial);
+        scene.add(particles);
+
+        // Camera position
+        camera.position.z = 15;
+        camera.position.y = 2;
+
+        // Mouse interaction
+        const mouse = new THREE.Vector2();
+        const cursor = document.querySelector('.custom-cursor');
+        
+        document.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+            
+            cursor.style.left = event.clientX + 'px';
+            cursor.style.top = event.clientY + 'px';
+        });
+
+        // Explosion effect
+        function triggerExplosion() {
+            shapes.forEach((shape, index) => {
+                const targetScale = 2;
+                const originalScale = 1;
+                
+                // Scale up
+                const scaleUp = () => {
+                    shape.scale.x = shape.scale.y = shape.scale.z = targetScale;
+                    setTimeout(() => {
+                        shape.scale.x = shape.scale.y = shape.scale.z = originalScale;
+                    }, 300);
+                };
+                
+                setTimeout(scaleUp, index * 100);
+            });
+            
+            // Particle burst
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                particleVelocities[i].x *= 3;
+                particleVelocities[i].y *= 3;
+                particleVelocities[i].z *= 3;
+            }
+        }
+
+        // Floating elements
+        function createFloatingElements() {
+            const container = document.querySelector('.floating-elements');
+            for (let i = 0; i < 20; i++) {
+                const element = document.createElement('div');
+                element.className = 'floating-element';
+                element.style.left = Math.random() * 100 + '%';
+                element.style.animationDelay = Math.random() * 10 + 's';
+                element.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(element);
+            }
+        }
+        createFloatingElements();
+
+        // Stats update
+        let frameCount = 0;
+        let lastTime = performance.now();
+        
+        function updateStats() {
+            const verticesCount = scene.children.reduce((sum, child) => {
+                if (child.geometry) {
+                    return sum + (child.geometry.attributes.position ? child.geometry.attributes.position.count : 0);
+                }
+                return sum;
+            }, 0);
+            
+            document.getElementById('vertices').textContent = verticesCount.toLocaleString();
+            document.getElementById('objects').textContent = scene.children.length;
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = performance.now() * 0.001;
+            
+            // Rotate shapes
+            shapes.forEach((shape, index) => {
+                shape.rotation.x += 0.01 * (index + 1);
+                shape.rotation.y += 0.02 * (index + 1);
+                shape.rotation.z += 0.005 * (index + 1);
+                
+                // Floating motion
+                shape.position.y += Math.sin(time + index) * 0.01;
+            });
+            
+            // Update particles
+            const positions = particles.geometry.attributes.position.array;
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] += particleVelocities[i].x;
+                positions[i * 3 + 1] += particleVelocities[i].y;
+                positions[i * 3 + 2] += particleVelocities[i].z;
+                
+                // Boundary check
+                if (Math.abs(positions[i * 3]) > 25) particleVelocities[i].x *= -0.5;
+                if (Math.abs(positions[i * 3 + 1]) > 25) particleVelocities[i].y *= -0.5;
+                if (Math.abs(positions[i * 3 + 2]) > 25) particleVelocities[i].z *= -0.5;
+            }
+            particles.geometry.attributes.position.needsUpdate = true;
+            
+            // Rotate particle system
+            particles.rotation.y += 0.001;
+            
+            // Camera movement based on mouse
+            camera.position.x += (mouse.x * 2 - camera.position.x) * 0.02;
+            camera.position.y += (-mouse.y * 2 - camera.position.y) * 0.02;
+            camera.lookAt(scene.position);
+            
+            // Update lights
+            directionalLight.position.x = Math.sin(time) * 10;
+            pointLight.position.x = Math.cos(time) * 10;
+            
+            renderer.render(scene, camera);
+            
+            // FPS calculation
+            frameCount++;
+            const currentTime = performance.now();
+            if (currentTime >= lastTime + 1000) {
+                document.getElementById('fps').textContent = Math.round((frameCount * 1000) / (currentTime - lastTime));
+                frameCount = 0;
+                lastTime = currentTime;
+                updateStats();
+            }
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Start animation
+        animate();
+        updateStats();
+        loadLogo(); // Load the uploaded logo
+    </script>
+</body>
+</html>

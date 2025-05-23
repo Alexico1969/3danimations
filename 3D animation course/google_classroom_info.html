@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Classroom - 3D Animations Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .content-section { display: block; }
+        .section-intro {
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #D1D5DB;
+            color: #374151;
+        }
+        .section-intro h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0D9488;
+        }
+        .section-intro p {
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+        .Topic-card {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease-in-out;
+        }
+        .Topic-card:hover {
+            transform: translateY(-2px);
+        }
+        .Topic-card h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 0.75rem;
+        }
+        .Topic-card ul {
+            list-style-type: disc;
+            margin-left: 1.25rem;
+            color: #4B5563;
+        }
+        .Topic-card ul li {
+            margin-bottom: 0.25rem;
+        }
+        .Topic-card .visual-idea {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: #F9FAFB;
+            border-radius: 0.375rem;
+            border: 1px solid #E5E7EB;
+            font-style: italic;
+            color: #6B7280;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800 flex min-h-screen">
+
+    <aside class="w-64 bg-stone-50 p-6 shadow-lg fixed top-0 left-0 h-full overflow-y-auto">
+        <h1 class="text-2xl font-bold text-teal-700 mb-8">Google Classroom</h1>
+        <nav>
+            <ul>
+                <li>
+                    <a href="#about" class="block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors">About</a>
+                </li>
+                <li>
+                    <a href="#join" class="block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors">How to Join</a>
+                </li>
+                <li>
+                    <a href="#tips" class="block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors">Tips & Etiquette</a>
+                </li>
+                <li>
+                    <a href="#support" class="block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors">Support</a>
+                </li>
+                <li>
+                    <a href="https://classroom.google.com/c/NzQ2OTg1MzkyMzQ1?cjc=li2mvil" target="_blank" class="block py-2 px-3 mb-2 rounded-md bg-teal-600 text-white font-semibold hover:bg-teal-700 transition-colors">Open Google Classroom</a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-8 ml-64 overflow-y-auto">
+        <section id="about" class="content-section">
+            <div class="section-intro">
+                <h2>About Google Classroom</h2>
+                <p>Google Classroom is the central hub for all course announcements, assignments, resources, and communication for the 3D Animations course. Make sure to check it regularly to stay up to date!</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Why We Use Google Classroom</h3>
+                <ul>
+                    <li>Easy access to assignments and deadlines.</li>
+                    <li>Centralized location for course materials and resources.</li>
+                    <li>Direct communication with your instructor and classmates.</li>
+                    <li>Turn in your work and receive feedback efficiently.</li>
+                </ul>
+                <div class="visual-idea">Visual Idea: Screenshot of the Google Classroom dashboard with course tiles. (Placeholder for visual)</div>
+            </div>
+        </section>
+
+        <section id="join" class="content-section">
+            <div class="section-intro">
+                <h2>How to Join</h2>
+                <p>Follow these steps to join our Google Classroom for the 3D Animations course.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Joining Instructions</h3>
+                <ul>
+                    <li>Go to <a href="https://classroom.google.com/" class="text-teal-700 underline" target="_blank">classroom.google.com</a>.</li>
+                    <li>Sign in with your school Google account.</li>
+                    <li>Click the <strong>+</strong> button in the top right and select <strong>Join class</strong>.</li>
+                    <li>Enter the class code: <span class="bg-stone-200 px-2 py-1 rounded font-mono">li2mvil</span></li>
+                    <li>Or use this direct link: <a href="https://classroom.google.com/c/NzQ2OTg1MzkyMzQ1?cjc=li2mvil" class="text-teal-700 underline" target="_blank">Join 3D Animations Classroom</a></li>
+                </ul>
+                <div class="visual-idea">Visual Idea: Illustration of the "Join class" dialog with the code entered. (Placeholder for visual)</div>
+            </div>
+        </section>
+
+        <section id="tips" class="content-section">
+            <div class="section-intro">
+                <h2>Tips & Etiquette</h2>
+                <p>Make the most of Google Classroom by following these best practices.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Best Practices</h3>
+                <ul>
+                    <li>Check the Classroom stream and your email regularly for updates.</li>
+                    <li>Turn in assignments before the deadline.</li>
+                    <li>Use the comments section for questions related to assignments.</li>
+                    <li>Be respectful and professional in all communications.</li>
+                    <li>Organize your files and keep track of feedback.</li>
+                </ul>
+                <div class="visual-idea">Visual Idea: A checklist or calendar icon, symbolizing organization and deadlines. (Placeholder for visual)</div>
+            </div>
+        </section>
+
+        <section id="support" class="content-section">
+            <div class="section-intro">
+                <h2>Support</h2>
+                <p>If you have trouble accessing Google Classroom or have technical questions, here’s how to get help.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Getting Help</h3>
+                <ul>
+                    <li>Contact your instructor: <strong>Alex van Winkel</strong> (<a href="mailto:avanwinkel@molloyhs.org" class="text-teal-700 underline">avanwinkel@molloyhs.org</a>)</li>
+                    <li>Visit the <a href="https://support.google.com/edu/classroom/" class="text-teal-700 underline" target="_blank">Google Classroom Help Center</a></li>
+                    <li>Ask your classmates in the Classroom stream.</li>
+                </ul>
+                <div class="visual-idea">Visual Idea: An email icon or a help/support icon. (Placeholder for visual)</div>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

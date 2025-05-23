@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Animations: Mastering Blender - Interactive Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Visualization & Content Choices: 
+        - Course Sections (e.g., Blender Fundamentals): Goal: Organize. Method: Sidebar navigation tabs. Interaction: Click to display section content. Justification: Standard, intuitive navigation for structured content.
+        - Topics (e.g., "The Blender Interface"): Goal: Inform. Method: Text content blocks (headings, lists). Interaction: Scroll, read. Justification: Direct presentation of textual information.
+        - "Visual Ideas" (e.g., "annotated screenshot"): Goal: Illustrate. Method: Placeholder text/styled div with future potential for image + JS-powered tooltips. Interaction: (Conceptual) Hover for details. Justification: Provides context for where visuals would go.
+        - "Cycles vs. Eevee": Goal: Compare. Method: Chart.js Bar Chart (conceptual Speed vs. Quality). Interaction: View. Justification: Visual comparison of abstract qualities. Library: Chart.js.
+        - Unicode icons (e.g., checkmarks for objectives, tool icons): Goal: Enhance visual appeal/clarity. Method: HTML Unicode. Interaction: View. Justification: Lightweight visual cues.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif; /* Tailwind uses Inter by default if available */
+        }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        .sidebar-link.active {
+            background-color: #0D9488; /* teal-600 */
+            color: white;
+        }
+        .Topic-card {
+            background-color: white;
+            border-radius: 0.5rem; /* rounded-lg */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 1.5rem; /* mb-6 */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); /* shadow-md */
+            transition: transform 0.2s ease-in-out;
+        }
+        .Topic-card:hover {
+            transform: translateY(-2px);
+        }
+        .Topic-card h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: 600; /* font-semibold */
+            color: #1F2937; /* gray-800 */
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .Topic-card ul {
+            list-style-type: disc;
+            margin-left: 1.25rem; /* ml-5 */
+            color: #4B5563; /* gray-600 */
+        }
+        .Topic-card ul li {
+            margin-bottom: 0.25rem; /* mb-1 */
+        }
+        .Topic-card .visual-idea {
+            margin-top: 1rem; /* mt-4 */
+            padding: 0.75rem; /* p-3 */
+            background-color: #F9FAFB; /* gray-50 */
+            border-radius: 0.375rem; /* rounded-md */
+            border: 1px solid #E5E7EB; /* border-gray-200 */
+            font-style: italic;
+            color: #6B7280; /* gray-500 */
+            font-size: 0.875rem; /* text-sm */
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px; /* max-w-2xl */
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px; /* Default height, can be responsive with Tailwind h-[] */
+            max-height: 400px;
+        }
+        
+        .hide{
+            display: none;
+        }
+
+        @media (min-width: 768px) { /* md breakpoint */
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .section-intro {
+            padding: 1rem 0;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #D1D5DB; /* gray-300 */
+            color: #374151; /* gray-700 */
+        }
+        .section-intro h2 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: 700; /* font-bold */
+            color: #0D9488; /* teal-600 */
+        }
+        .section-intro p {
+            margin-top: 0.5rem; /* mt-2 */
+            font-size: 1rem; /* text-base */
+        }
+    </style>
+</head>
+<body class="bg-stone-100 text-stone-800 flex min-h-screen">
+
+    <aside class="w-64 bg-stone-50 p-6 shadow-lg fixed top-0 left-0 h-full overflow-y-auto">
+        <h1 class="text-2xl font-bold text-teal-700 mb-8">3D Animations</h1>
+        <nav id="course-nav">
+            <ul>
+                <li><a href="#" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors" data-section="overview">Course Overview</a></li>
+                <li><a href="#" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors" data-section="fundamentals">Blender Fundamentals</a></li>
+                <li><a href="#" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors" data-section="modeling">Modeling Techniques</a></li>
+                <li><a href="#" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors" data-section="materials">Materials & Textures</a></li>
+                <li><a href="#" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors" data-section="lighting">Lighting & Rendering</a></li>
+                <li><a href="#" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors" data-section="animation">Animation Principles</a></li>
+                <li><a href="#" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors" data-section="post_production">Post-Production & Next Steps</a></li>
+                <li><a href="#" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors" data-section="google_classroom"><strong>>> Google Classroom</strong></a></li>
+                
+                <!--li><a href="google_classroom_info.html" class="sidebar-link block py-2 px-3 mb-2 rounded-md hover:bg-teal-100 hover:text-teal-700 transition-colors"><strong>Link to Google Classroom</strong></a></li><-->
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="flex-1 p-8 ml-64 overflow-y-auto">
+        
+        <section id="overview" class="content-section">
+            <h2>Course Overview</h2>
+            <p>This course introduces the fundamentals of 3D animation using Blender. You will learn modeling, texturing, lighting, animation, and rendering techniques to create your own animated scenes.</p>
+        </section>
+        <section id="schedule" class="content-section">
+            <h2>Weekly Schedule</h2>
+            <ul>
+                <li><strong>Week 1:</strong> Introduction to Blender & 3D Concepts</li>
+                <li><strong>Week 2:</strong> Modeling Basics</li>
+                <!-- ... -->
+            </ul>
+        </section>
+
+        <section id="overview" class="content-section">
+            <div class="section-intro">
+                <h2>Course Overview</h2>
+                <p>Welcome to the "3D Animations: Mastering Blender" course! This section provides an introduction to the world of 3D animation, highlights why Blender is an excellent tool for this journey, and outlines what you will achieve by the end of this course.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 1: General info</h3>
+                <p><strong>3D Animations: Mastering Blender</strong></p>
+                <p><strong>Subtitle:</strong> From Concept to Creation</p>
+                <p><strong>Instructor:</strong> Alex van Winkel</p>
+                <div class="hide"> A sleek, dark background with subtle glowing geometric lines forming an abstract 3D shape. A minimalist Blender logo (or icon) integrated subtly. (Placeholder for visual)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 2: Welcome & Introduction</h3>
+                <p><strong>Welcome to the World of 3D!</strong></p>
+                <ul>
+                    <li>Excited to embark on this creative journey with you.</li>
+                    <li>What is 3D animation?
+                        <ul>
+                            <li>Bringing static models to life.</li>
+                            <li>Storytelling through motion.</li>
+                            <li>Applications: Film, Games, VR/AR, Product Design, Architecture.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <div class="hide"> A captivating, abstract 3D animation still (e.g., glowing particles, a stylized character pose) on a dark background. (Placeholder for visual)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 3: Why Blender? Your Free & Powerful Studio</h3>
+                <p><strong>Why Blender? Your Free & Powerful Studio</strong></p>
+                <ul>
+                    <li>Open-Source & Free: Accessible to everyone.</li>
+                    <li>All-in-One: Modeling, Sculpting, Rigging, Animation, Simulation, Rendering, Compositing, Video Editing.</li>
+                    <li>Vast Community & Resources: Tutorials, forums, add-ons.</li>
+                    <li>Industry-Standard Capabilities: Used by professionals and hobbyists alike.</li>
+                </ul>
+                <div class="hide"> A collage of Blender's different workspaces (modeling, sculpting, animation) with a subtle wireframe overlay. Highlight the Blender logo. (Placeholder for visual)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 4: Course Objectives</h3>
+                <p><strong>What You'll Achieve</p>
+                <ul>
+                    <li>Understand the core principles of 3D animation.</li>
+                    <li>Navigate and master the Blender interface.</li>
+                    <li>Create and sculpt 3D models.</li>
+                    <li>Apply materials and textures for realistic surfaces.</li>
+                    <li>Set up lighting and render compelling scenes.</li>
+                    <li>Animate objects and characters using keyframes.</li>
+                    <li>Develop a foundational portfolio piece.</li>
+                </ul>
+                <div class="hide"> A series of small, futuristic icons representing each objective (e.g., a cube for modeling, a lightbulb for lighting, a play button for animation). (Placeholder for visual - e.g., Cube: 🧊, Light:💡, Play: ▶️)</div>
+            </div>
+
+        </section>
+
+        <section id="fundamentals" class="content-section">
+            <div class="section-intro">
+                <h2>Blender Fundamentals</h2>
+                <p>This section covers the essential building blocks for working in Blender. You'll learn about the interface, how to navigate in 3D space, create basic objects, and perform fundamental transformations.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 5: The Blender Interface: Your Digital Workspace</h3>
+                <ul>
+                    <li><strong>3D Viewport:</strong> Where the magic happens.</li>
+                    <li><strong>Outliner:</strong> Scene hierarchy and object management.</li>
+                    <li><strong>Properties Editor:</strong> Modifiers, materials, render settings.</li>
+                    <li><strong>Timeline/Dope Sheet:</strong> Animation control.</li>
+                    <li><strong>Tool Shelf/N-Panel:</strong> Quick access to tools and properties.</li>
+                </ul>
+                <div class="hide"> A clean, annotated screenshot of the Blender interface with key areas highlighted. (Placeholder for annotated visual)</div>
+            </div>
+             <div class="Topic-card">
+                <h3>Topic 6: Navigation & Controls: Mastering Your View</h3>
+                <ul>
+                    <li><strong>Orbit:</strong> Middle Mouse Button (MMB) drag.</li>
+                    <li><strong>Pan:</strong> Shift + MMB drag.</li>
+                    <li><strong>Zoom:</strong> Scroll Wheel or Ctrl + MMB drag.</li>
+                    <li><strong>View Presets:</strong> Numpad keys (1, 3, 7, 9, 5).</li>
+                    <li><strong>Gizmos & Overlays:</strong> Understanding what you see.</li>
+                </ul>
+                <div class="hide"> Animated GIFs or short video clips demonstrating each navigation method. Or, a diagram showing mouse/keyboard shortcuts with corresponding view changes. (Placeholder for visual/diagram)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 7: Basic Object Creation: Primitives</h3>
+                 <ul>
+                    <li><strong>Add Menu (Shift + A):</strong> Mesh, Curve, Surface, Text, Armature, etc.</li>
+                    <li><strong>Cube, Sphere, Cylinder, Plane, Cone, Torus:</strong> Building blocks of 3D.</li>
+                    <li><strong>Adjusting Parameters:</strong> Operator panel (bottom-left after creation).</li>
+                </ul>
+                <div class="hide"> A clean render of various primitive shapes in Blender, perhaps with a subtle wireframe overlay. (Placeholder for visual - e.g., Cube: 🧊, Sphere: 🟠, Cylinder:  cilindro)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 8: Transformations: Move, Rotate, Scale</h3>
+                <ul>
+                    <li><strong>Grab (G):</strong> Translate objects in 3D space.</li>
+                    <li><strong>Rotate (R):</strong> Spin objects around an axis.</li>
+                    <li><strong>Scale (S):</strong> Resize objects uniformly or non-uniformly.</li>
+                    <li><strong>Axis Constraints:</strong> X, Y, Z keys after transformation.</li>
+                    <li><strong>Numerical Input:</strong> Precision control.</li>
+                </ul>
+                <div class="hide"> Three distinct 3D objects, each demonstrating one transformation (one moved, one rotated, one scaled), with a clear visual representation of the transformation gizmo. (Placeholder: Move ↔️, Rotate 🔄, Scale ↔️↕️)</div>
+            </div>
+        </section>
+
+        <section id="modeling" class="content-section">
+            <div class="section-intro">
+                <h2>Modeling Techniques</h2>
+                <p>Dive into the art of 3D modeling. This section distinguishes between Object and Edit modes, introduces essential modeling tools, explains non-destructive workflows with modifiers, and touches upon basic sculpting.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 9: Object Mode vs. Edit Mode: The Core Distinction</h3>
+                <ul>
+                    <li><strong>Object Mode (Tab):</strong> Manipulate entire objects (position, rotation, scale).</li>
+                    <li><strong>Edit Mode (Tab):</strong> Manipulate individual components (vertices, edges, faces).</li>
+                    <li><strong>Vertex Select (1), Edge Select (2), Face Select (3):</strong> Targeting specific elements.</li>
+                </ul>
+                <div class="hide"> A split screen or two side-by-side images: one showing a selected object in Object Mode, the other showing the same object in Edit Mode with selected vertices/edges/faces. (Placeholder for visual comparison)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 10: Essential Modeling Tools: Extrude, Inset, Loop Cut</h3>
+                <ul>
+                    <li><strong>Extrude (E):</strong> Push out new geometry from selected faces/edges.</li>
+                    <li><strong>Inset (I):</strong> Create an inner boundary on a face.</li>
+                    <li><strong>Loop Cut (Ctrl + R):</strong> Add new edge loops to divide geometry.</li>
+                    <li><strong>Bevel (Ctrl + B):</strong> Round off edges or corners.</li>
+                </ul>
+                <div class="hide"> Short, clear animated GIFs or before-and-after images demonstrating each tool's effect on a simple cube. (Placeholder for visual demonstrations)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 11: Modifiers: Non-Destructive Workflows</h3>
+                <ul>
+                    <li><strong>What are Modifiers?</strong> Operations applied on top of mesh data.</li>
+                    <li><strong>Subdivision Surface:</strong> Smooths geometry, adds detail.</li>
+                    <li><strong>Mirror:</strong> Symmetrical modeling.</li>
+                    <li><strong>Array:</strong> Duplicate objects in a pattern.</li>
+                    <li><strong>Boolean:</strong> Combine or subtract meshes.</li>
+                    <li><strong>Applying Modifiers:</strong> Making changes permanent.</li>
+                </ul>
+                <div class="hide"> A visual comparison of an object before and after applying a Subdivision Surface modifier, and a simple mirrored object. (Placeholder for visual comparison)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 12: Basic Sculpting (Optional/Advanced)</h3>
+                <ul>
+                    <li><strong>Sculpt Mode:</strong> Digital clay.</li>
+                    <li><strong>Brushes:</strong> Draw, Smooth, Grab, Clay Strips.</li>
+                    <li><strong>Dyntopo/Remesh:</strong> Dynamic topology for detail.</li>
+                    <li><strong>Use Cases:</strong> Characters, organic props, high-detail surfaces.</li>
+                </ul>
+                <div class="hide"> A stylized render of a sculpted head or creature, perhaps with a wireframe overlay to show the mesh density. (Placeholder for sculpted visual)</div>
+            </div>
+        </section>
+
+        <section id="materials" class="content-section">
+            <div class="section-intro">
+                <h2>Materials & Textures</h2>
+                <p>Learn how to give your 3D models a realistic or stylized look. This section covers creating materials, UV unwrapping for texture application, using image textures, and exploring the power of procedural textures.</p>
+            </div>
+             <div class="Topic-card">
+                <h3>Topic 13: Materials: Giving Objects a Look</h3>
+                <ul>
+                    <li><strong>What is a Material?</strong> Defines how light interacts with a surface.</li>
+                    <li><strong>Principled BSDF Shader:</strong> The all-in-one material node.</li>
+                    <li><strong>Key Properties:</strong> Base Color, Metallic, Specular, Roughness, Transmission.</li>
+                    <li><strong>Shading Viewports:</strong> Material Preview vs. Rendered.</li>
+                </ul>
+                <div class="hide"> A set of identical spheres, each with a different material applied (e.g., metallic, rough plastic, glass), showcasing the visual differences. (Placeholder: Sphere 1: Shiny Metal, Sphere 2: Matte Plastic, Sphere 3: Clear Glass)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 14: UV Unwrapping: Preparing for Textures</h3>
+                <ul>
+                    <li><strong>What are UVs?</strong> 2D coordinates for 3D surfaces.</li>
+                    <li><strong>Analogy:</strong> Cutting a cardboard box flat.</li>
+                    <li><strong>Seams:</strong> Marking where to cut.</li>
+                    <li><strong>Smart UV Project, Cube Projection, Cylinder Projection:</strong> Quick unwrapping methods.</li>
+                    <li><strong>UV Editor:</strong> Visualizing and adjusting UVs.</li>
+                </ul>
+                <div class="hide"> A 3D cube next to its unwrapped 2D UV layout, with a checkerboard texture applied to show distortion. (Placeholder: 🧊 -> 🔲)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 15: Image Textures: Adding Detail with Images</h3>
+                <ul>
+                    <li><strong>Albedo/Color Maps:</strong> The primary color of the surface.</li>
+                    <li><strong>Normal Maps:</strong> Faking surface detail (bumps, grooves).</li>
+                    <li><strong>Roughness Maps:</strong> Controlling shininess/dullness.</li>
+                    <li><strong>Displacement Maps:</strong> Physically deforming the mesh.</li>
+                    <li><strong>Node Editor:</strong> Connecting textures to the Principled BSDF.</li>
+                </ul>
+                <div class="hide"> A 3D object with a detailed texture applied, with a small inset showing the various texture maps used. (Placeholder for textured object visual)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 16: Procedural Textures: Infinite Detail</h3>
+                <ul>
+                    <li><strong>What are Procedural Textures?</strong> Generated mathematically, not from images.</li>
+                    <li><strong>Advantages:</strong> Resolution independent, customizable, smaller file size.</li>
+                    <li><strong>Examples:</strong> Noise, Musgrave, Voronoi, Wave textures.</li>
+                    <li><strong>Node Editor:</strong> Building complex procedural materials.</li>
+                </ul>
+                <div class="hide"> A sphere or cube with a complex, abstract procedural texture applied (e.g., a stylized rock or alien skin). (Placeholder for procedural texture visual)</div>
+            </div>
+        </section>
+
+        <section id="lighting" class="content-section">
+            <div class="section-intro">
+                <h2>Lighting & Rendering</h2>
+                <p>Master the art of illumination and bringing your scenes to final image form. This section explores different light types, HDRI lighting, camera setup, and compares Blender's powerful render engines, Cycles and Eevee.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 17: Light Types: Illuminating Your Scene</h3>
+                <ul>
+                    <li><strong>Point Light:</strong> Omni-directional, like a bare bulb.</li>
+                    <li><strong>Sun Light:</strong> Parallel rays, simulates sunlight.</li>
+                    <li><strong>Area Light:</strong> Rectangular/disk light, soft shadows.</li>
+                    <li><strong>Spot Light:</strong> Conical beam, focused light.</li>
+                    <li><strong>Emissive Materials:</strong> Objects that glow.</li>
+                </ul>
+                <div class="hide"> A simple scene (e.g., a few primitives) with each light type demonstrated in a separate render or a composite image showing the effect of each. (Placeholder: Point 💡, Sun ☀️, Area ▭, Spot 🔦)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 18: HDRI Lighting: Environment Illumination</h3>
+                <ul>
+                    <li><strong>What is HDRI?</strong> High Dynamic Range Image.</li>
+                    <li><strong>Purpose:</strong> Provides realistic environment lighting and reflections.</li>
+                    <li><strong>Workflow:</strong> World Properties > Surface > Environment Texture.</li>
+                    <li><strong>Resources:</strong> Poly Haven, HDRI Haven.</li>
+                </ul>
+                <div class="hide"> A 3D object rendered with an HDRI background, showing realistic reflections and lighting from the environment. (Placeholder for HDRI visual)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 19: Camera Setup: Framing Your Shot</h3>
+                <ul>
+                    <li><strong>Adding a Camera (Shift + A).</strong></li>
+                    <li><strong>View > Cameras > Active Camera (Numpad 0).</strong></li>
+                    <li><strong>Lock Camera to View:</strong> Easier positioning (N-Panel > View).</li>
+                    <li><strong>Focal Length:</strong> Perspective control.</li>
+                    <li><strong>Depth of Field:</strong> Blurring foreground/background.</li>
+                </ul>
+                <div class="hide"> A screenshot of the 3D viewport with the camera selected, showing the camera's view frustum and settings. (Placeholder: 📷 Camera settings visual)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 20: Render Engines: Cycles vs. Eevee</h3>
+                <ul>
+                    <li><strong>Cycles:</strong> Physically accurate, ray-tracing, realistic results, slower.</li>
+                    <li><strong>Eevee:</strong> Real-time, rasterization, faster, good for previews/stylized.</li>
+                    <li><strong>Choosing the Right Engine:</strong> Depends on project needs.</li>
+                    <li><strong>Render Settings:</strong> Samples, denoising, output format.</li>
+                </ul>
+                <div class="hide"> A side-by-side comparison of the same scene rendered in Cycles and Eevee, highlighting the visual differences (e.g., lighting quality, shadows). (Chart below)</div>
+                <div class="chart-container mt-4">
+                    <canvas id="renderEnginesChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <section id="animation" class="content-section">
+            <div class="section-intro">
+                <h2>Animation Principles</h2>
+                <p>Bring your models to life! This section covers the fundamentals of animation, including keyframing, using the Graph Editor for fine control, exploring animation modifiers and constraints, an introduction to character rigging, and basic physics simulations.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 21: Keyframing Basics: Bringing Objects to Life</h3>
+                <ul>
+                    <li><strong>What is a Keyframe?</strong> A recorded state of an object at a specific time.</li>
+                    <li><strong>I-Key Menu:</strong> Insert Location, Rotation, Scale keyframes.</li>
+                    <li><strong>Timeline:</strong> Visualizing and moving keyframes.</li>
+                    <li><strong>Interpolation:</strong> How Blender calculates frames between keyframes.</li>
+                </ul>
+                <div class="hide"> A simple object (e.g., a cube) moving across the screen, with a visual representation of keyframes on a timeline. (Placeholder: 🧊➡️ ----🕰️---- ➡️🧊)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 22: Graph Editor: Fine-Tuning Motion</h3>
+                <ul>
+                    <li><strong>Purpose:</strong> Control the speed and acceleration of animation.</li>
+                    <li><strong>F-Curves:</strong> Visualizing animation data.</li>
+                    <li><strong>Handles:</strong> Adjusting interpolation (Ease In/Out, Linear, Constant).</li>
+                    <li><strong>Modifiers:</strong> Adding procedural animation (e.g., Noise, Cycles).</li>
+                </ul>
+                <div class="hide"> A screenshot of the Graph Editor showing an F-curve with adjusted handles, next to a simple animated object demonstrating the smooth motion. (Placeholder for Graph Editor visual)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 23: Animation Modifiers & Constraints (Optional)</h3>
+                <ul>
+                    <li><strong>Array Modifier:</strong> Animating duplicates.</li>
+                    <li><strong>Follow Path Constraint:</strong> Objects moving along a curve.</li>
+                    <li><strong>Drivers:</strong> Linking properties together.</li>
+                    <li><strong>NLA Editor:</strong> Non-Linear Animation for complex sequences.</li>
+                </ul>
+                <div class="hide"> A simple animation demonstrating an object following a path, or an array of objects animating in sequence. (Placeholder for modifier/constraint visual)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 24: Character Rigging (Introduction)</h3>
+                <ul>
+                    <li><strong>What is a Rig?</strong> A system of bones (armature) to control a mesh.</li>
+                    <li><strong>Armature Creation:</strong> Adding bones.</li>
+                    <li><strong>Parenting:</strong> Connecting bones to the mesh (Automatic Weights).</li>
+                    <li><strong>Inverse Kinematics (IK):</strong> Easier posing.</li>
+                    <li><strong>Weight Painting:</strong> Defining bone influence.</li>
+                </ul>
+                <div class="hide"> A simple character model with its underlying armature clearly visible, perhaps in a basic pose. (Placeholder for rigging visual 🧍🦴)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 25: Physics Simulations (Basic)</h3>
+                <ul>
+                    <li><strong>Rigid Body:</strong> Hard objects colliding and reacting.</li>
+                    <li><strong>Cloth Simulation:</strong> Realistic fabric draping and movement.</li>
+                    <li><strong>Collision Objects:</strong> Defining interaction surfaces.</li>
+                    <li><strong>Baking Simulations:</strong> Storing the calculated physics.</li>
+                </ul>
+                <div class="hide"> A short animated GIF of a simple rigid body simulation (e.g., falling cubes) or a cloth simulation (e.g., a flag waving). (Placeholder for physics visual 🧱�🏳️)</div>
+            </div>
+        </section>
+
+        <section id="post_production" class="content-section">
+            <div class="section-intro">
+                <h2>Post-Production & Next Steps</h2>
+                <p>Finalize your creations and plan your future in 3D. This section touches upon video editing within Blender, basic compositing techniques, outlines the course project, and provides resources for continued learning and community engagement.</p>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 26: Video Editing in Blender (VSE)</h3>
+                <ul>
+                    <li><strong>Basic Cuts & Transitions:</strong> Assembling your animation.</li>
+                    <li><strong>Adding Audio:</strong> Soundtracks and effects.</li>
+                    <li><strong>Image/Video Strips:</strong> Layering elements.</li>
+                    <li><strong>Exporting Final Video:</strong> Render settings for video output.</li>
+                </ul>
+                <div class="hide"> A screenshot of the Blender VSE interface with a few video strips and audio tracks. (Placeholder for VSE visual 🎞️🎵)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 27: Compositing Basics: Enhancing Your Renders</h3>
+                <ul>
+                    <li><strong>What is Compositing?</strong> Combining and enhancing render passes.</li>
+                    <li><strong>Node Editor (Compositing):</strong> Applying effects post-render.</li>
+                    <li><strong>Common Nodes:</strong> Alpha Over, Glare, Denoise, Color Balance.</li>
+                    <li><strong>Render Layers:</strong> Separating elements for control.</li>
+                </ul>
+                <div class="hide"> A simple render before and after compositing, showing the visual improvement (e.g., added glow, color correction). (Placeholder for compositing visual ✨)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 28: Your Course Project: Bringing It All Together</h3>
+                <ul>
+                    <li><strong>Project Goal:</strong> [Define a specific, achievable project, e.g., "Create a 10-second animated short featuring a simple character or object interacting with its environment."]</li>
+                    <li><strong>Phases:</strong> Concept, Modeling, Texturing, Lighting, Animation, Rendering.</li>
+                    <li><strong>Deliverables:</strong> Final rendered video, Blender project file.</li>
+                    <li><strong>Timeline:</strong> [Specify deadlines].</li>
+                </ul>
+                <div class="hide"> An inspiring image of a completed student project (if you have one) or a concept art piece that aligns with the project goal. (Placeholder for project visual 🏆)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 29: Resources for Further Learning</h3>
+                <ul>
+                    <li><strong>Blender Manual:</strong> Official documentation.</li>
+                    <li><strong>YouTube Channels:</strong> Blender Guru, Ducky 3D, Grant Abbitt, CG Cookie.</li>
+                    <li><strong>Online Courses:</strong> Udemy, Skillshare, CGCookie.</li>
+                    <li><strong>Community Forums:</strong> Blender Artists, Reddit r/blender.</li>
+                    <li><strong>Asset Libraries:</strong> Poly Haven (textures, HDRIs), Sketchfab (models).</li>
+                </ul>
+                <div class="hide"> A grid of logos or icons for the suggested resources. (Placeholder for resource logos 📚)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 30: The 3D Community & Beyond</h3>
+                <ul>
+                    <li><strong>Networking:</strong> Connect with other artists.</li>
+                    <li><strong>Portfolio Building:</strong> Showcase your work.</li>
+                    <li><strong>Career Paths:</strong> Game Artist, VFX Artist, Motion Designer, Product Visualizer, Architect.</li>
+                    <li><strong>Keep Experimenting!</strong></li>
+                </ul>
+                <div class="hide"> A futuristic cityscape or a diverse group of stylized 3D characters, symbolizing the vastness of the 3D world and career opportunities. (Placeholder for community visual 🌍🤝)</div>
+            </div>
+            <div class="Topic-card">
+                <h3>Topic 31: Thank You & Questions</h3>
+                <p><strong>Thank You & Questions</strong></p>
+                <p><strong>Subtitle:</strong> Let's Create!</p>
+                <p><strong>Contact:</strong> [Your Email/Website]</p>
+                <br>
+            </div>
+        </section>
+
+        <section id="google_classroom" class="content-section">
+            <div class="Topic-card">
+                <h3>Google Classroom</h3>
+                <p><strong>Join</strong>
+                    <a href="https://classroom.google.com/c/NzQ2OTg1MzkyMzQ1?cjc=li2mvil" target="_blank" style="color: #a21caf; font-weight: bold;"> >> LINK</a>
+                </p>
+                <p><strong>Goto</strong>
+                    <a href="https://classroom.google.com/" target="_blank" style="color: #a21caf; font-weight: bold;"> >> LINK</a>
+                </p>
+                <p><strong>Help and contact:</strong> avanwinkel@molloyhs.org</p>
+                <br>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const navLinks = document.querySelectorAll('#course-nav a.sidebar-link');
+            const contentSections = document.querySelectorAll('.content-section');
+            const firstSectionId = navLinks[0].getAttribute('data-section');
+
+            function showSection(sectionId) {
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                    if (section.id === sectionId) {
+                        section.classList.add('active');
+                    }
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('data-section') === sectionId) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const sectionId = this.getAttribute('data-section');
+                    showSection(sectionId);
+                });
+            });
+
+            // Show the first section by default
+            showSection(firstSectionId);
+
+            // Chart.js: Render Engines Comparison
+            const ctxRenderEngines = document.getElementById('renderEnginesChart');
+            if (ctxRenderEngines) {
+                new Chart(ctxRenderEngines, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Eevee', 'Cycles'],
+                        datasets: [{
+                            label: 'Conceptual Speed',
+                            data: [90, 30],
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)', // Blue
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }, {
+                            label: 'Conceptual Quality',
+                            data: [70, 95],
+                            backgroundColor: 'rgba(255, 159, 64, 0.6)', // Orange
+                            borderColor: 'rgba(255, 159, 64, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100,
+                                title: {
+                                    display: true,
+                                    text: 'Relative Score (0-100)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Render Engines: Eevee vs. Cycles (Conceptual Comparison)',
+                                font: { size: 16 }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y !== null) {
+                                            label += context.parsed.y;
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        },
+                        // Ensure labels are not cut off
+                        // For long labels, Chart.js v3+ handles wrapping better by default,
+                        // but for axis titles or very specific needs, you might need more config.
+                        // This example focuses on basic setup.
+                        // For label wrapping on axes (if needed for other charts):
+                        // scales: { x: { ticks: { callback: function(value) { ... } } } }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
