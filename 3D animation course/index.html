@@ -540,8 +540,9 @@
                         link.classList.add('active');
                     }
                 });
-                // Scroll main content to top when switching sections
+                // Scroll main content and window to top when switching sections
                 document.querySelector('main').scrollTop = 0;
+                window.scrollTo({ top: 0, behavior: 'auto' });
             }
 
             navLinks.forEach(link => {
